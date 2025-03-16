@@ -1,9 +1,10 @@
+# erp-microservice/auth_service/app/schemas/user.py
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 
-# Shared properties
+# Shared properties for all user models
 class UserBase(BaseModel):
     username: str
     email: EmailStr
@@ -25,10 +26,19 @@ class UserUpdate(BaseModel):
     is_superuser: Optional[bool] = None
 
 # Properties to return via API
-class User(UserBase):
+class UserInDB(UserBase):
     id: int
     created_at: datetime
     updated_at: datetime
 
     class Config:
         from_attributes = True
+
+# Public user model (what we return from API)
+class User(UserInDB):
+    pass
+
+# User authentication schema
+class UserLogin(BaseModel):
+    username: str
+    password: str
